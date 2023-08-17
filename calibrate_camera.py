@@ -7,11 +7,11 @@ def calibrate_camera(images, pattern_size):
     objpoints = []
     imgpoints = []
     for image_path in images:
-        print(image_path)
+        # print(image_path)
         image = cv2.imread(image_path)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         ret, corners = cv2.findChessboardCorners(gray, pattern_size, None)
-        print(ret,corners)
+        # print(ret,corners)
         if ret:
             objpoints.append(objp)
             imgpoints.append(corners)
