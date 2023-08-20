@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+# git push 테스트
 point_list = []
 
 def draw_circle(image, image_with_box, center_x2, center_y2):
