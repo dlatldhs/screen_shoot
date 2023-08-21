@@ -74,7 +74,18 @@ def main():
     # read img
     # image_path = 'center_shot.png'
     image_path = 'test_4.png'
+    result_image_path = "center_shot.png"
     
+    result_img = cv2.imread(result_image_path)
+    rh, rw, _ = result_img.shape
+
+    rw = rw//2
+    rh = rh//2
+    result_img = cv2.resize(result_img,(rw,rh))
+
+    rw = rw//2
+    rh = rh//2
+
     image = cv2.imread(image_path)
     h,w,_ = image.shape
     w = w//2
@@ -100,10 +111,17 @@ def main():
         print(f"중점 좌표 {point_center}")
         print(f"카메라의 중심 {cam_center}")
 
+        r_center = (cam_center[0] - point_center[0],cam_center[1] - point_center[1])
+        print(r_center)
+
+        rw = rw + ((r_center[0]//2)//2)
+        rh = rh + ((r_center[1]//2)//2)
+        cv2.circle(result_img, (rw,rh),2,(0,255,0),-1)
         image_with_line = draw_line_between_points(image_with_box,cam_center,point_center,colors)
         
-        displacement_vector = calculate_vector(cam_center, point_center)
-
+        # displacement_vector = calculate_vector(cam_center, point_center)
+    
+    cv2.imshow("result target img", result_img)
     cv2.imshow("original img", image)
     cv2.imshow("white points img", image_with_box)
     cv2.imshow("image w line", image_with_line)
