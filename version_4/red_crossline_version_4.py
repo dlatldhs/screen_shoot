@@ -14,10 +14,11 @@ def main():
     colors = (255, 0, 0)
     
     # target img
-    result_image_path = "center_shot.png"
+    # result_image_path = "center_shot.png"
+    result_image_path = "only_crossline.png"
 
     # read cam
-    cap = cv2.VideoCapture()
+    cap = cv2.VideoCapture(1)
     
     while True:
 
