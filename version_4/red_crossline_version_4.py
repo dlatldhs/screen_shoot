@@ -60,7 +60,7 @@ def main():
             print(points_distance)
 
             rcw = result_center[0] + ((points_distance[0]//2)//2)
-            rch = result_center[1] + ((points_distance[0]//2)//2)
+            rch = result_center[1] + ((points_distance[1]//2)//2)
             
             # draw circle
             cv2.circle(result_img, (rcw,rch),2,(0,255,0),-1)
