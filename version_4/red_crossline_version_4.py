@@ -4,21 +4,20 @@ from screen_shot_lib import *
 
 def get_center( img ):
     h, w, _ = img.shape
+    print(h,w)
     w = w//2
     h = h//2
     return (w,h)
 
 def main():
     
-    # variable
-    colors = (255, 0, 0)
-    
     # target img
     # result_image_path = "center_shot.png"
     result_image_path = "only_crossline.png"
 
     # read cam
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(cv2.CAP_DSHOW+1)
+    # 캠 인식 안될 때 cv2.CAP_DSHOW+number | cap = cv2.VideoCapture(cv2.CAP_DSHOW+1)
     
     while True:
 
@@ -59,8 +58,10 @@ def main():
             points_distance = (cam_center[0] - point_center[0],cam_center[1] - point_center[1])
             print(points_distance)
 
-            rcw = result_center[0] + ((points_distance[0]//2)//2)
-            rch = result_center[1] + ((points_distance[1]//2)//2)
+            # rcw = result_center[0] + ((points_distance[0]//2)//2)
+            # rch = result_center[1] + ((points_distance[1]//2)//2)
+            rcw = result_center[0] + ((points_distance[0]))
+            rch = result_center[1] + ((points_distance[1]))
             
             # draw circle
             cv2.circle(result_img, (rcw,rch),2,(0,255,0),-1)
