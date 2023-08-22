@@ -28,37 +28,6 @@ def find_white_points(image):
     
     return corners
 
-def detect_green_cross_lines(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
-    # 적절한 초록색의 HSV 경계 값 설정
-    lower_green = np.array([50, 100, 100])
-    upper_green = np.array([70, 255, 255])
-
-    # 이진 이미지 생성
-    mask = cv2.inRange(hsv, lower_green, upper_green)
-
-    #선 검출 (HoughLinesP 변환 사용)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
-    canny = cv2.Canny(thresh, 50, 100)
-
-    lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
-
-    output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    
-    if lines is not None:
-        for line in lines:
-            x1, y1, x2, y2 = line[0]
-            angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
-
-            # 수평선과 수직선 검출
-            if 80 < abs(angle) < 100 or -10 < abs(angle) < 10:
-                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    return output
-
-
 def detect_red_cross_lines(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
@@ -87,6 +56,13 @@ def detect_red_cross_lines(image):
             if 80 < abs(angle) < 100 or -10 < abs(angle) < 10:
                 cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
+                 # 선의 기울기 계산
+                dx = x2 - x1
+                dy = y2 - y1
+                slope = dy / dx
+                angle = np.arctan(slope) * 180 / np.pi
+                print("Line angle :", angle)       
+
     return output
 
 def draw_line_between_points(image, point1, point2, color):
@@ -100,3 +76,50 @@ def calculate_vector(p1, p2):
     vector_x = p2[0] - p1[0]
     vector_y = p2[1] - p1[1]
     return (vector_x, vector_y)
+
+def main():
+    # read img
+    # image_path = 'center_shot.png'
+    image_path = 'test_4.png'
+    result_image_path = "center_shot.png"
+    
+    cap = cv2.VideoCapture(2)
+
+    while True:
+
+        ret, frame = cap.read()
+        
+        result_img = cv2.imread(result_image_path)
+        rh, rw, _ = result_img.shape
+
+        rw = rw//2
+        rh = rh//2
+        result_img = cv2.resize(result_img,(rw,rh))
+
+        rw = rw//2
+        rh = rh//2
+
+        image = frame
+        h,w,_ = image.shape
+        w = w//2
+        h = h//2
+        colors = (255, 0, 0)
+        cam_center = (w,h)
+
+        # detecting red crossline
+        crossline_img = detect_red_cross_lines(image)
+        cv2.imshow('red crossline img',crossline_img)
+
+
+        key = cv2.waitKey(1)
+        if key == ord('q'):
+            break
+        if key == ord('c'):
+            cv2.imwrite("yunjong.jpg", crossline_img)
+            
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
