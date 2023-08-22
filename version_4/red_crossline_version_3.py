@@ -73,7 +73,7 @@ def calculate_vector(p1, p2):
 def main():
     # read img
     # image_path = 'center_shot.png'
-    image_path = 'test_4.png'
+    image_path = 'yunjonghyeok.png'
     result_image_path = "center_shot.png"
     
     result_img = cv2.imread(result_image_path)

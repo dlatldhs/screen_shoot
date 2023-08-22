@@ -46,24 +46,29 @@ def detect_red_cross_lines(image):
     lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
 
     output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    
+    angle = 0
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
             angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
             # 수평선과 수직선 검출
-            if 80 < abs(angle) < 100 or -10 < abs(angle) < 10:
-                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
+            
+            # cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
                  # 선의 기울기 계산
-                dx = x2 - x1
-                dy = y2 - y1
-                slope = dy / dx
-                angle = np.arctan(slope) * 180 / np.pi
-                print("Line angle :", angle)       
+            
+            dx = x2 - x1
+            dy = y2 - y1
+            slope = dy / dx
+            # print(dy, dx)
+            angle = np.arctan(slope) * 180 / np.pi
+            
+            
+            
+              
 
-    return output
+    return output, angle
 
 def draw_line_between_points(image, point1, point2, color):
     # 두 점 사이에 선 그리기
@@ -107,7 +112,7 @@ def main():
         cam_center = (w,h)
 
         # detecting red crossline
-        crossline_img = detect_red_cross_lines(image)
+        crossline_img, angle = detect_red_cross_lines(image)
         cv2.imshow('red crossline img',crossline_img)
 
 
@@ -116,6 +121,9 @@ def main():
             break
         if key == ord('c'):
             cv2.imwrite("yunjong.jpg", crossline_img)
+
+        print("angle : ", angle)
+        
             
 
     cap.release()

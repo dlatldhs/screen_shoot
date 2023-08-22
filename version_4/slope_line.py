@@ -28,9 +28,9 @@ w = w // 2
 h = h // 2
 image = cv2.resize(img, (w, h))
 
-
-# 기울기 x를 설정 (예: 0.5)
-slope = 2.5 
+angle = -25 # 각도 대입
+slope = np.tan(angle * np.pi / 180.0)
+draw_line_through_center(image, slope)
 
 # 이미지에 기울기가 x인 선분을 그리기
 draw_line_through_center(image, slope)
