@@ -60,7 +60,8 @@ def detect_green_cross_lines(image):
 
 def draw_line_through_center(img, slope):
     h, w = img.shape[:2]
-    cx, cy = w // 2, h // 2
+    cx = w // 2
+    cy = h // 2
 
     # y절편 계산
     b = cy - slope * cx
@@ -124,21 +125,22 @@ def detect_red_cross_lines(image):
                 -π ~ π 까지
                 * 180 / np.pi 를 통해 라디안 각도를 실제 각도로 변환
                 '''
+
                 angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
-                # print(f"angle {angle}")
+                print(f"angle {angle}") 
 
                 # 수평선과 수직선 검출
                 cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
 
 
-                dx = x2 - x1
-                dy = y2 - y1
-                slope = dy / dx
+                # dx = x2 - x1
+                # dy = y2 - y1
+                # slope = dy / dx
 
                 # print(f"slope {slope}")
                 
-                angle = np.arctan(slope) * 180 / np.pi
+                # angle = np.arctan(slope) * 180 / np.pi
                 float_angle = round(angle, 2) #소수점 2자리까지
                 angles.append(float_angle)  # 각도 값 저장
 
