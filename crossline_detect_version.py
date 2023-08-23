@@ -30,17 +30,17 @@ def main():
         # target center point
         rw = rw//2
         rh = rh//2
+        
+        only_cross_center = ( rw , rh ) 
 
         # capture img
         image = frame
-        h,w,_ = image.shape
-        w = w//2;
-        h = h//2
-        cam_center = (w,h)
 
         # detecting red crossline
         crossline_img, angles = functions.detect_red_cross_lines(image)
         cv2.imshow('red crossline img',crossline_img)
+        cv2.imshow('original img',image)
+
 
         key = cv2.waitKey(1)
 
@@ -77,6 +77,14 @@ def main():
 
                 functions.draw_line_through_center(capture_image, slope)
                 functions.draw_line_through_center(capture_image, slope2)
+
+                # TODO 객체의 교점 위치 2개 좌표 출력
+
+                # TODO 카메라의 중점과 객체 교점의 위치 차 출력 해서 빼든가 해서 only_crossline 사진에서 중점과 카메라의 중점 비교
+
+                # TODO 초록색 점 출력
+
+                # TODO live 실시간 으로 ㄱㄱ
 
                 # Show the image after drawing lines
                 cv2.imshow("capture_image", capture_image)

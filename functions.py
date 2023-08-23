@@ -86,7 +86,8 @@ def detect_red_cross_lines(image):
     
     # 빨간색 범위의 최소,최대값 저장
     lower_red = np.array([0, 120, 70])
-    upper_red = np.array([10, 255, 255])
+    # upper_red = np.array([10, 255, 255])
+    upper_red = np.array([102, 228, 248])
 
     # 빨간색 부분을 추출하여 이진화된 마스크 이미지 추출
     mask = cv2.inRange(hsv, lower_red, upper_red)
@@ -128,10 +129,10 @@ def detect_red_cross_lines(image):
 
                 angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
-                print(f"angle {angle}") 
+                # print(f"angle {angle}") 
 
                 # 수평선과 수직선 검출
-                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
+                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
 
                 # dx = x2 - x1
