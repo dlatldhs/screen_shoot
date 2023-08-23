@@ -1,6 +1,23 @@
 import cv2
 import numpy as np
 
+def draw_line_through_center(img, slope):
+    h, w = img.shape[:2]
+    cx, cy = w // 2, h // 2
+
+    # y절편 계산
+    b = cy - slope * cx
+
+    # 두 점의 좌표를 계산
+    x_start = 0
+    y_start = int(slope * x_start + b)
+    x_end = w
+    y_end = int(slope * x_end + b)
+
+    # 선분을 초록색으로 그리기
+    cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
+
+
 def draw_bounding_box(image, points):
     x, y, w, h = cv2.boundingRect(points)
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -66,9 +83,8 @@ def detect_red_cross_lines(image):
                 dy = y2 - y1
                 slope = dy / dx
                 angle = np.arctan(slope) * 180 / np.pi
-                int_angle = int(angle)
-                angles.append(int_angle)  # 각도 값 저장
-                print("Line angle:", int_angle)       
+                float_angle = round(angle, 2) #소수점 2자리까지
+                angles.append(float_angle)  # 각도 값 저장
 
     return output, angles
 
@@ -89,14 +105,16 @@ def main():
     # image_path = 'center_shot.png'
     image_path = 'test_4.png'
     result_image_path = "center_shot.png"
+    capture_path = "yunjong.jpg"
 
     save_point = []
     
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(0)
 
     while True:
 
         ret, frame = cap.read()
+
         
         result_img = cv2.imread(result_image_path)
         rh, rw, _ = result_img.shape
@@ -120,21 +138,44 @@ def main():
         cv2.imshow('red crossline img',crossline_img)
 
 
+
+
+        result_cap_img = cv2.imread(capture_path)
+        
+
+
         key = cv2.waitKey(1)
         if key == ord('q'):
             break
         if key == ord('c'):
-            cv2.imwrite("yunjong.jpg", crossline_img)
+            cv2.imwrite(capture_path, crossline_img)
             for angle in angles:
-                if angle not in save_point:
+                if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in save_point):
                     save_point.append(angle)
+
+            if len(save_point) >= 2:
+                draw_angle = save_point[0]
+                draw_angle2 = save_point[1]
+
+                slope = np.tan(draw_angle * np.pi / 180.0)
+                slope2 = np.tan(draw_angle2 * np.pi / 180.0)
+
+                draw_line_through_center(result_cap_img, slope)
+                draw_line_through_center(result_cap_img, slope2)
+                    
+                # Show the image after drawing lines
+                cv2.imshow("result_cap", result_cap_img)
+
 
             
 
+    # draw_angle = save_point[0]
+    # draw_angle2 = save_point[1]
+
+    
+
     cap.release()
     cv2.destroyAllWindows()
-
-    print("저장된 값 : ", save_point)
 
 if __name__ == "__main__":
     main()

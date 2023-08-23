@@ -28,12 +28,14 @@ w = w // 2
 h = h // 2
 image = cv2.resize(img, (w, h))
 
-angle =56 # 각도 대입
+angle =54.98 # 각도 대입 54.98, -26.19
+angle2 =-26.19 # 각도 대입 54.98, -26.19
 slope = np.tan(angle * np.pi / 180.0)
-draw_line_through_center(image, slope)
+slope2 = np.tan(angle2 * np.pi / 180.0)
 
 # 이미지에 기울기가 x인 선분을 그리기
 draw_line_through_center(image, slope)
+draw_line_through_center(image, slope2)
 
 # 결과 이미지 출력
 cv2.imshow("Result", image)
