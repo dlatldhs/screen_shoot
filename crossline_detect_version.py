@@ -1,71 +1,71 @@
 import cv2
 import numpy as np
-
 import functions
 
 def main():
-    # read img
-    result_image_path = "only_crosslineq.png"
-    capture_path = "image.jpg"
 
-    save_point = []
-    
+    # img variable
+    result_image_path = "only_crossline.png"
+
+    # line angle save
+    line_angle_save = []
+
+    # cam read
     cap = cv2.VideoCapture(cv2.CAP_DSHOW+1)
 
     while True:
-
-        ret, frame = cap.read()
-
         
+        # get frame
+        ret, frame = cap.read()
+        
+        # target img
         result_img = cv2.imread(result_image_path)
+        
+        # target img resize
         rh, rw, _ = result_img.shape
-
-        rw = rw//2
-        rh = rh//2
+        rw = rw//2;rh = rh//2
         result_img = cv2.resize(result_img,(rw,rh))
 
+        # target center point
         rw = rw//2
         rh = rh//2
 
+        # capture img
         image = frame
         h,w,_ = image.shape
-        w = w//2
-        h = h//2
-        colors = (255, 0, 0)
+        w = w//2;h = h//2
         cam_center = (w,h)
 
         # detecting red crossline
         crossline_img, angles = functions.detect_red_cross_lines(image)
         cv2.imshow('red crossline img',crossline_img)
 
-
-
-
-        result_cap_img = cv2.imread(capture_path)
-        
-
-
         key = cv2.waitKey(1)
+
         if key == ord('q'):
             break
+
         if key == ord('c'):
-            cv2.imwrite(capture_path, crossline_img)
+            ret, frame = cap.read()
+            capture_image = frame
             for angle in angles:
-                if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in save_point):
-                    save_point.append(angle)
+                if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in line_angle_save):
+                    line_angle_save.append(angle)
 
-            if len(save_point) >= 2:
-                draw_angle = save_point[0]
-                draw_angle2 = save_point[1]
+            if len(line_angle_save) >= 2:
+                draw_angle = line_angle_save[0]
+                draw_angle2 = line_angle_save[1]
 
+                print(draw_angle,draw_angle2)
+                
                 slope = np.tan(draw_angle * np.pi / 180.0)
                 slope2 = np.tan(draw_angle2 * np.pi / 180.0)
 
-                functions.draw_line_through_center(result_cap_img, slope)
-                functions.draw_line_through_center(result_cap_img, slope2)
+                functions.draw_line_through_center(capture_image, slope)
+                functions.draw_line_through_center(capture_image, slope2)
                     
                 # Show the image after drawing lines
-                cv2.imshow("result_cap", result_cap_img)
+                cv2.imshow("capture_image", capture_image)
 
     cap.release()
     cv2.destroyAllWindows()
