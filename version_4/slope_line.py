@@ -28,7 +28,7 @@ w = w // 2
 h = h // 2
 image = cv2.resize(img, (w, h))
 
-angle = -25 # 각도 대입
+angle =56 # 각도 대입
 slope = np.tan(angle * np.pi / 180.0)
 draw_line_through_center(image, slope)
 

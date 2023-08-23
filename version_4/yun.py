@@ -29,16 +29,14 @@ def find_white_points(image):
     return corners
 
 def detect_red_cross_lines(image):
+    angles = []  # 새로 추가한 코드: 이 부분을 함수 시작 부분에 추가
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
-    # 적절한 빨간색의 HSV 경계 값 설정
     lower_red = np.array([0, 120, 70])
     upper_red = np.array([10, 255, 255])
 
-    # 이진 이미지 생성
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
-    #선 검출 (HoughLinesP 변환 사용)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     _, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
     canny = cv2.Canny(thresh, 50, 100)
@@ -46,29 +44,33 @@ def detect_red_cross_lines(image):
     lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
 
     output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-    angle = 0
+    
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
-            # 수평선과 수직선 검출
-            
-            # cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
+            # 선의 중심에 위치한 픽셀이 빨간색 범위 내인지 확인
+            mid_line_x = int((x1 + x2) / 2)
+            mid_line_y = int((y1 + y2) / 2)
+            pixel_value = mask[mid_line_y, mid_line_x]
 
-                 # 선의 기울기 계산
-            
-            dx = x2 - x1
-            dy = y2 - y1
-            slope = dy / dx
-            # print(dy, dx)
-            angle = np.arctan(slope) * 180 / np.pi
-            
-            
-            
-              
+            # 중심 픽셀이 빨간색 범위에 있으면, 각도와 선 그리기
+            if pixel_value != 0:
+                angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
-    return output, angle
+                # 수평선과 수직선 검출
+                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 255), 2)
+
+                # 선의 기울기 계산
+                dx = x2 - x1
+                dy = y2 - y1
+                slope = dy / dx
+                angle = np.arctan(slope) * 180 / np.pi
+                int_angle = int(angle)
+                angles.append(int_angle)  # 각도 값 저장
+                print("Line angle:", int_angle)       
+
+    return output, angles
 
 def draw_line_between_points(image, point1, point2, color):
     # 두 점 사이에 선 그리기
@@ -87,6 +89,8 @@ def main():
     # image_path = 'center_shot.png'
     image_path = 'test_4.png'
     result_image_path = "center_shot.png"
+
+    save_point = []
     
     cap = cv2.VideoCapture(2)
 
@@ -112,7 +116,7 @@ def main():
         cam_center = (w,h)
 
         # detecting red crossline
-        crossline_img, angle = detect_red_cross_lines(image)
+        crossline_img, angles = detect_red_cross_lines(image)
         cv2.imshow('red crossline img',crossline_img)
 
 
@@ -121,13 +125,16 @@ def main():
             break
         if key == ord('c'):
             cv2.imwrite("yunjong.jpg", crossline_img)
+            for angle in angles:
+                if angle not in save_point:
+                    save_point.append(angle)
 
-        print("angle : ", angle)
-        
             
 
     cap.release()
     cv2.destroyAllWindows()
+
+    print("저장된 값 : ", save_point)
 
 if __name__ == "__main__":
     main()
