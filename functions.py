@@ -30,10 +30,14 @@ def find_white_points(image):
 
 def detect_green_cross_lines(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
+
+    angles = []
+
     # 적절한 초록색의 HSV 경계 값 설정
-    lower_green = np.array([50, 100, 100])
-    upper_green = np.array([70, 255, 255])
+    # lower_green = np.array([50, 100, 100])
+    # upper_green = np.array([70, 255, 255])
+    lower_green = np.array([30, 120, 120])  # 수정된 하한값
+    upper_green = np.array([80, 255, 255])  # 수정된 상한값
 
     # 이진 이미지 생성
     mask = cv2.inRange(hsv, lower_green, upper_green)
@@ -43,20 +47,38 @@ def detect_green_cross_lines(image):
     _, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
     canny = cv2.Canny(thresh, 50, 100)
 
-    lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+    # lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+    lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=50, maxLineGap=150)
 
     output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
     
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
+            
+            # 선의 중심에 위치한 픽셀이 빨간색 범위 내인지 확인
+            mid_line_x = int((x1 + x2) / 2)
+            mid_line_y = int((y1 + y2) / 2)
+            pixel_value = mask[mid_line_y, mid_line_x]
+            
+            # 중심 픽셀이 빨간색 범위에 있으면, 각도와 선 그리기
+            if pixel_value != 0:
+                 # 점1(x1,y1) 과 점2(x2,y2) 사이에 각도를 계산하는 공식
+                ''' 
+                y축과 x축 사이의 각도를 라디안 단위로 계산
+                -π ~ π 까지
+                * 180 / np.pi 를 통해 라디안 각도를 실제 각도로 변환
+                '''
+                
+                angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi
 
-            # 수평선과 수직선 검출
-            if 80 < abs(angle) < 100 or -10 < abs(angle) < 10:
-                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                # 수평선과 수직선 검출
+                # if 80 < abs(angle) < 100 or -10 < abs(angle) < 10:
+                cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                float_angle = round(angle, 2) #소수점 2자리까지
+                angles.append(float_angle)  # 각도 값 저장
 
-    return output
+    return output, angles
 
 def draw_line_through_center(img, slope):
     h, w = img.shape[:2]
@@ -80,14 +102,16 @@ def detect_red_cross_lines(image):
     빨간색 십자가의 형태를 감지하고 해당 선들의 각도를 계산하는 함수
     '''
     angles = []  # 새로 추가한 코드: 이 부분을 함수 시작 부분에 추가
-    
+    x1, y1, x2, y2 = 0, 0, 0, 0  # 변수 초기화
+
     # BGR -> HSV Color Transform
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
     # 빨간색 범위의 최소,최대값 저장
     lower_red = np.array([0, 120, 70])
     # upper_red = np.array([10, 255, 255])
-    upper_red = np.array([102, 228, 248])
+    # upper_red = np.array([102, 228, 248])
+    upper_red = np.array([10, 255, 255])
 
     # 빨간색 부분을 추출하여 이진화된 마스크 이미지 추출
     mask = cv2.inRange(hsv, lower_red, upper_red)
@@ -102,7 +126,8 @@ def detect_red_cross_lines(image):
     canny = cv2.Canny(thresh, 50, 100)
 
     # Hough 변환으로 선분 검출
-    lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+    lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=50, maxLineGap=100)
+    # lines = cv2.HoughLinesP(canny, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
 
     # mask img -> bgr img
     output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
@@ -112,7 +137,7 @@ def detect_red_cross_lines(image):
         for line in lines:
             # first line
             x1, y1, x2, y2 = line[0]
-
+            print
             # 선의 중심에 위치한 픽셀이 빨간색 범위 내인지 확인
             mid_line_x = int((x1 + x2) / 2)
             mid_line_y = int((y1 + y2) / 2)
@@ -132,20 +157,12 @@ def detect_red_cross_lines(image):
                 # print(f"angle {angle}") 
 
                 # 수평선과 수직선 검출
-                cv2.line(output, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-
-                # dx = x2 - x1
-                # dy = y2 - y1
-                # slope = dy / dx
-
-                # print(f"slope {slope}")
+                cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
                 
-                # angle = np.arctan(slope) * 180 / np.pi
                 float_angle = round(angle, 2) #소수점 2자리까지
                 angles.append(float_angle)  # 각도 값 저장
 
-    return output, angles
+    return output, angles, (x1,x2) , (y1,y2)
 
 def draw_line_between_points(image, point1, point2, color):
     # 두 점 사이에 선 그리기
@@ -158,3 +175,9 @@ def calculate_vector(p1, p2):
     vector_x = p2[0] - p1[0]
     vector_y = p2[1] - p1[1]
     return (vector_x, vector_y)
+
+def mouse_handler(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:#마우스 왼쪽 버튼
+        print("x좌표 : ", x)
+        print("y좌표 : ", y)
+ 

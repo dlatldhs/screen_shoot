@@ -37,7 +37,7 @@ def main():
         image = frame
 
         # detecting red crossline
-        crossline_img, angles = functions.detect_red_cross_lines(image)
+        crossline_img, angles, (x1,x2), (y1,y2) = functions.detect_red_cross_lines(image)
         cv2.imshow('red crossline img',crossline_img)
         cv2.imshow('original img',image)
 
@@ -62,21 +62,36 @@ def main():
                 draw_angle = line_angle_save[0]
                 draw_angle2 = line_angle_save[1]
 
-                print(f"draw angle{draw_angle,draw_angle2}")
-
-                h , w , _ = capture_image.shape
-
-                h = h//2
-                w = w//2
-
-                capture_image = cv2.resize(capture_image,(w,h))
-
-                # 각도 -> 기울기로 변환
                 slope = np.tan(draw_angle * np.pi / 180.0)
                 slope2 = np.tan(draw_angle2 * np.pi / 180.0)
 
                 functions.draw_line_through_center(capture_image, slope)
                 functions.draw_line_through_center(capture_image, slope2)
+
+                print(f"draw angle{draw_angle,draw_angle2}")
+
+                h , w , _ = capture_image.shape
+
+                dy = y2 - y1
+                dx = x2 - x1
+                slope = dy / dx
+                
+                b = y1 - slope * x1
+                y_intercept = int(b)
+
+                h = h//2
+                w = w//2
+
+                print("y절편 : ", y_intercept)
+
+                print("x : ", x1)
+                print("y : ", y1)
+                
+                print("기울기 : ", slope)
+
+                # capture_image = cv2.resize(capture_image,(w,h))
+
+                # 각도 -> 기울기로 변환
 
                 # TODO 객체의 교점 위치 2개 좌표 출력
 
