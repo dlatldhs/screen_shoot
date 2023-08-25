@@ -188,3 +188,51 @@ def mouse_handler(event, x, y, flags, param):
         print("x좌표 : ", x)
         print("y좌표 : ", y)
  
+def detect_red_lines(img):
+
+    '''
+    
+    made by dlatldhs
+
+    이 함수는 선을 찾는 함수
+    맨 처음 이미지를 읽은 다음 복잡한 컬러 화소를 가지고 있는 이미지를
+    단순한 형태인 회색조 형태로 변환함 그리고 좀 더 처리하기 쉬운 형태인 이진화로
+    영상의 어두운 부분은 완전 어둡고 밝은 부분은 더 밝게 변함
+    여기서 Thresholud() 의 인자로 임계값을 설정할 수 있음 카메라 성능에 따라 적절한 임계값 필요
+    canny() 함수로 흰색과 검은색의 경계선을 추출함( 윤곽선 )
+    윤곽선 중 직선으로 된 선을 추출합니다.
+    반환되는 값으로는 리스트로 감지된 값의 시작점과 끝점을 반환합니다.
+    예시) [ (x1,y1,x2,y2) , (x1,y1,x2,y2) ...] 이런식으로 인식한 선의 좌표를 반환함
+    참고 자료 : https://blog.naver.com/suresofttech/221606239357
+
+    '''
+    # image read
+    image = img.copy()
+
+    # image 회색조 변환
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # 회색조 -> 이진화
+    _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+
+    # 이진화 된 사진으로 윤곽선 검출
+    edges = cv2.Canny(binary, 50, 150)
+
+    # 직선 검출하기
+
+    # rho : 검출할 선분의 거리 해상도(픽셀 단위) 보통 1사용
+    # theta : 세타 (각도)
+    # threshold : 투표(vote)를 위한 최소 공간으로 임계값과 비슷함
+    # 이 값보다 큰 값만 직선으로 검출됨, 일반적으로 검출할 선분에 개수에 따라 조정됨
+    # 값이 작으면 많이 검출, 값이 크면 더 적은 선분 검출
+
+    # minLinelength : 선분의 최소길이(픽셀 단위) 이 짧은 선분은 무시됨
+    # maxLineGap : 끊어진 선분 사이의 최대 허용 간격(픽셀 단위)
+    # maxLineGap 보다 작은 간격이 있는 선분은 결합되어 하나의 선으로 됨
+    
+    lines = cv2.HoughLinesP(edges, rho=1, theta=1*np.pi/180,
+                             threshold=100,
+                             minLineLength=100,
+                             maxLineGap=10)
+    
+    return lines
