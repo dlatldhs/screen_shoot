@@ -100,6 +100,13 @@ def draw_line_through_center(img, slope):
     # 선분을 초록색으로 그리기
     cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
 
+    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope = 기울기
+    #초록색 시작, 끝점 확인하는 코드
+    print("초록색 x1 : ", x_start, "초록색 y1 : ", y_start)
+    print("초록색 x2 : ", x_end, "초록색 y2 : ", y_end)
+    print("현재 초록색 기울기 : ", result_slope)
+
+
 def detect_red_cross_lines(image):
     '''
     빨간색 십자가의 형태를 감지하고 해당 선들의 각도를 계산하는 함수
@@ -107,17 +114,23 @@ def detect_red_cross_lines(image):
     angles = []  # 새로 추가한 코드: 이 부분을 함수 시작 부분에 추가
     x1, y1, x2, y2 = 0, 0, 0, 0  # 변수 초기화
 
-    # BGR -> HSV Color Transform
+    # BGR에서 HSV 즉 Hue-Saturation-Value형식으로 변환 (색상, 채도, 명도)
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
-    # 빨간색 범위의 최소,최대값 저장
-    lower_red = np.array([0, 120, 70])
-    # upper_red = np.array([10, 255, 255])
-    # upper_red = np.array([102, 228, 248])
-    upper_red = np.array([10, 255, 255])
+        
+    # 주황색에서부터 빨간색까지 인식할 수 있게
+    lower_orange = np.array([0, 120, 70])
+    upper_orange = np.array([22, 255, 255])
+    # (이렇게 색상범위를 여러개를 한 이유는 사진으로 찍었을때 노랑과 주황으로 보이는 경우를 대비)
+    # 빨강에서부터 노랑까지 인식할 수 있게
+    lower_red = np.array([160, 120, 70])
+    upper_red = np.array([179, 255, 255])
 
-    # 빨간색 부분을 추출하여 이진화된 마스크 이미지 추출
-    mask = cv2.inRange(hsv, lower_red, upper_red)
+    # 두 범위의 마스크 이미지를 생성합니다.
+    mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
+    mask_red = cv2.inRange(hsv, lower_red, upper_red)
+
+    # 위에서 만든 마스크 두개를 한 마스크로 결합을 해준다
+    mask = cv2.addWeighted(mask_orange, 1, mask_red, 1, 0)
 
     # grayscale 변경
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -162,14 +175,21 @@ def detect_red_cross_lines(image):
                 # 수평선과 수직선 검출
                 cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
+
+                # 빨간선 인식한거의 시작점과끝점에 동그라미 표시하기
+                cv2.circle(output, (x1, y1), 10, (0, 255, 0), 2)
+                cv2.circle(output, (x2, y2), 10, (0, 255, 0), 2)
+
                 float_angle = round(angle, 2) #소수점 2자리까지
                 angles.append(float_angle)  # 각도 값 저장
                 output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
                 cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
-        cv2.imshow("mask", mask)
-        cv2.imshow("result", output)
+
+        # cv2.imshow("mask", mask)
+        # cv2.imshow("result", output)
         cv2.waitKey(0)
-    return output, angles, (x1,x2) , (y1,y2)
+
+    return output, angles
 
 def draw_line_between_points(image, point1, point2, color):
     # 두 점 사이에 선 그리기
