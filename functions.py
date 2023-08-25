@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 
+def draw_dot(img,x,y):
+    cv2.circle(img,(x,y),5,(255,0,255),-1)
+
 def draw_bounding_box(image, points):
     x, y, w, h = cv2.boundingRect(points)
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -158,10 +161,14 @@ def detect_red_cross_lines(image):
 
                 # 수평선과 수직선 검출
                 cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                
+
                 float_angle = round(angle, 2) #소수점 2자리까지
                 angles.append(float_angle)  # 각도 값 저장
-
+                output = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+                cv2.line(output, (x1, y1), (x2, y2), (255, 0, 0), 2)
+        cv2.imshow("mask", mask)
+        cv2.imshow("result", output)
+        cv2.waitKey(0)
     return output, angles, (x1,x2) , (y1,y2)
 
 def draw_line_between_points(image, point1, point2, color):

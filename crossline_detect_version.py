@@ -48,46 +48,51 @@ def main():
             break
 
         if key == ord('c'):
+
+            # cam read
             ret, frame = cap.read()
-            line_angle_save = []
             capture_image = frame
+            
+            # angles
+            line_angle_save = []
+            draw_angles = []
+            slopes = []
+
+            # 
             for angle in angles:
                 if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in line_angle_save):
                     line_angle_save.append(angle)
 
             if len(line_angle_save) >= 2:
-                #여기서 앵글값을 슬로프로 값을 변환하여 위에 함수에 기울기를 지정해준것
-                #어차피 여기서 앵글값을 넘겨줘도 위에 함수에서 그림을 그리기 위해선 슬로프로 값을 변화하고 그려야 하기때문에
-                #여기서 미리 앵글값을 슬로프값으로 변환하여 저 함수로 넘겨준것
-                draw_angle = line_angle_save[0]
-                draw_angle2 = line_angle_save[1]
+                '''
+                각도 -> 기울기로 변환
+                '''
 
-                slope = np.tan(draw_angle * np.pi / 180.0)
-                slope2 = np.tan(draw_angle2 * np.pi / 180.0)
+                draw_angles.append(line_angle_save[0])
+                draw_angles.append(line_angle_save[1])
 
-                functions.draw_line_through_center(capture_image, slope)
-                functions.draw_line_through_center(capture_image, slope2)
+                slopes.append(np.tan(draw_angles[0] * np.pi / 180.0))
+                slopes.append(np.tan(draw_angles[1] * np.pi / 180.0))
 
-                print(f"draw angle{draw_angle,draw_angle2}")
+                functions.draw_line_through_center(capture_image, slopes[0])
+                functions.draw_line_through_center(capture_image, slopes[1])
+
+                # print(f"draw angle{draw_angles[0],draw_angles[1]}")
+
+                print(f"sloples[0]: {slopes[0]} slopes[1]: {slopes[1]}")
 
                 h , w , _ = capture_image.shape
 
                 dy = y2 - y1
                 dx = x2 - x1
                 slope = dy / dx
+                print(f"slope2 : {slope}")
                 
                 b = y1 - slope * x1
-                y_intercept = int(b)
+                y_intercept = int(b) # y 절편
 
-                h = h//2
-                w = w//2
-
-                print("y절편 : ", y_intercept)
-
-                print("x : ", x1)
-                print("y : ", y1)
-                
-                print("기울기 : ", slope)
+                functions.draw_dot(capture_image,0,y_intercept)
+                # functions.draw_dot(capture_image,x2,y2)
 
                 # capture_image = cv2.resize(capture_image,(w,h))
 
