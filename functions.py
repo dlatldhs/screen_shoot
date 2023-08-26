@@ -207,7 +207,7 @@ def mouse_handler(event, x, y, flags, param):
     if event == cv2.EVENT_LBUTTONDOWN:#마우스 왼쪽 버튼
         print("x좌표 : ", x)
         print("y좌표 : ", y)
- 
+
 def detect_red_lines(img):
 
     '''
@@ -233,10 +233,12 @@ def detect_red_lines(img):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # 회색조 -> 이진화
-    _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+    # _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+    # 블러로 부드럽게 ~ 
+    gauss = cv2.GaussianBlur(gray, (5,5), 0)
 
     # 이진화 된 사진으로 윤곽선 검출
-    edges = cv2.Canny(binary, 50, 150)
+    edges = cv2.Canny(gauss, 50, 150)
 
     # 직선 검출하기
 
@@ -249,10 +251,10 @@ def detect_red_lines(img):
     # minLinelength : 선분의 최소길이(픽셀 단위) 이 짧은 선분은 무시됨
     # maxLineGap : 끊어진 선분 사이의 최대 허용 간격(픽셀 단위)
     # maxLineGap 보다 작은 간격이 있는 선분은 결합되어 하나의 선으로 됨
-    
+
     lines = cv2.HoughLinesP(edges, rho=1, theta=1*np.pi/180,
-                             threshold=100,
-                             minLineLength=100,
-                             maxLineGap=10)
+                             threshold=50,
+                             minLineLength=10,
+                             maxLineGap=250)
     
     return lines
