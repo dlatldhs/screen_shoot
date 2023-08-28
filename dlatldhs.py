@@ -9,7 +9,7 @@ def main():
 
     # line angle save
     line_angle_save = []
-    line_list = []
+    red_line_list = []
     c = 2
 
     # capture img
@@ -19,15 +19,15 @@ def main():
     ed_img, lines, line_angle_save = functions.get_lines(mask)
     copy = image.copy()
 
-    functions.draw_line_through_center(image, line_angle_save)
+    green_intercept_y = functions.draw_line_through_center(image, line_angle_save)
     
     for line in lines:
         if c > 0:
             c -= 1
             # print(type(line[0]))
-            line_list.append(line[0])
+            red_line_list.append(line[0])
 
-    dots_img = functions.draw_dots(image,line_list)
+    dots_img = functions.draw_dots(image,red_line_list)
     
     # functions.draw_line_through_center(image, line_angle_save)
     # functions.draw_dot(img=copy,x=581,y=1)
@@ -40,12 +40,13 @@ def main():
     # img = image.copy()
     # result = functions.draw_lines(img,lines)
 
-    # cv2.imshow('dots',dots_img)
+    cv2.imshow('dots',dots_img)
     cv2.imshow('image',image)
     # cv2.imshow('mask ',mask)
     # cv2.imshow('copy',copy)
     
     # cv2.imshow('result',result)
+    print("초록 y절편 : ", green_intercept_y)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

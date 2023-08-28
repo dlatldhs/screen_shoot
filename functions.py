@@ -83,30 +83,6 @@ def detect_green_cross_lines(image):
 
     return output, angles
 
-def draw_line_through_center(img, angles):
-    h, w = img.shape[:2]
-    cx = w // 2
-    cy = h // 2
- 
-    # 여기 변경된 부분
-    for angle in angles:
-        slope = np.tan(np.deg2rad(angle))  # Convert to radians as np.tan expects input in radians
-
-        # y절편 계산
-        b = cy - slope * cx
-
-        # 두 점의 좌표를 계산
-        x_start = 0
-        y_start = int(slope * x_start + b)
-        x_end = w
-        y_end = int(slope * x_end + b)
-
-        # 선분을 초록색으로 그리기
-        cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
-
-    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope=기울기
-    
-    return img 
 
 def detect_red_cross_lines(image):
     '''
@@ -329,11 +305,42 @@ def get_lines(img):
     
     return img,lines,line_angle_save
 
+#빨간십자선 좌표 들어있는 곳
 def draw_dots( img , lines ):
     dots = img.copy()
     for l in lines:
         x1, y1, x2, y2 = l
         # print(x1,y1,x2,y2)
+        
         draw_dot(img=dots,x=x1,y=y1)
         draw_dot(img=dots,x=x2,y=y2)
     return dots
+
+
+#초록 십자선 긋기
+def draw_line_through_center(img, angles):
+    h, w = img.shape[:2]
+    cx = w // 2
+    cy = h // 2
+ 
+    # 여기 변경된 부분
+    for angle in angles:
+        slope = np.tan(np.deg2rad(angle))  # Convert to radians as np.tan expects input in radians
+
+        # y절편 계산
+        b = cy - slope * cx
+
+        # 두 점의 좌표를 계산
+        x_start = 0
+        y_start = int(slope * x_start + b)
+        x_end = w
+        y_end = int(slope * x_end + b)
+
+        green_intercept_y = y_start - slope * x_start 
+
+        # 선분을 초록색으로 그리기
+        cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
+
+    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope=기울기
+    
+    return  green_intercept_y
