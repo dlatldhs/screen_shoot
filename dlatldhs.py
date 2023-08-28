@@ -13,6 +13,7 @@ def main():
     red_slopes = []
     red_intercepts_y = []
     mx = []
+    my = []
     c = 2
 
     # capture img
@@ -41,9 +42,15 @@ def main():
     mx.append( (green_intercepts_y[0] - red_intercepts_y[1])/(red_slopes[1] - green_slopes[0] ) )
     mx.append( (green_intercepts_y[1] - red_intercepts_y[0])/(red_slopes[0] - green_slopes[1] ) )
 
+    my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
+    my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
+
     print(f"green intercepts[0]: {green_intercepts_y[0]}\ngreen_intercepts[1]:{green_intercepts_y[1]}")
     
     print(f"meet dot mx[0]:{mx[0]}\nmx[1]:{mx[1]}")
+    print(f"meet dot my[0]:{my[0]}\nmy[1]:{my[1]}")
+
+    
     cv2.imshow('image',image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
