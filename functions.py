@@ -324,7 +324,9 @@ def draw_line_through_center(img, angles):
     h, w = img.shape[:2]
     cx = w // 2
     cy = h // 2
- 
+
+    green_intercepts_y = []
+    green_slopes = []
     # 여기 변경된 부분
     for angle in angles:
         slope = np.tan(np.deg2rad(angle))  # Convert to radians as np.tan expects input in radians
@@ -339,10 +341,11 @@ def draw_line_through_center(img, angles):
         y_end = int(slope * x_end + b)
 
         green_intercept_y = y_start - slope * x_start 
-        print("초록 y좌표 : ", green_intercept_y)
+        green_intercepts_y.append(green_intercept_y)
+        # print("초록 y좌표 : ", green_intercept_y)
         # 선분을 초록색으로 그리기
         cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
 
-    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope=기울기
-    
-    return  green_intercept_y
+        green_slopes.append(slope)
+
+    return  green_intercepts_y, green_slopes
