@@ -311,3 +311,12 @@ def get_lines(img):
                             threshold=100,minLineLength=10,maxLineGap=250)
     
     return img,lines
+
+def draw_dots( img , lines ):
+    dots = img.copy()
+    for l in lines:
+        x1, y1, x2, y2 = l
+        # print(x1,y1,x2,y2)
+        draw_dot(img=dots,x=x1,y=y1)
+        draw_dot(img=dots,x=x2,y=y2)
+    return dots
