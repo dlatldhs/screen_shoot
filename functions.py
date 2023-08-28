@@ -300,3 +300,14 @@ def draw_lines(img, lines):
             cv2.line(img, (x1,y1), (x2,y2), (80,0,80), 3)
             
     return img
+
+def get_lines(img):
+    # Canny 엣지 검출
+    binary = img.copy();
+    edges = cv2.Canny(binary, 50, 150)
+
+    # Hough Line Transform으로 선분 검출
+    lines = cv2.HoughLinesP(edges,rho=1,theta=np.pi/180,
+                            threshold=100,minLineLength=10,maxLineGap=250)
+    
+    return img,lines
