@@ -300,9 +300,7 @@ def get_lines(img):
             for angle in angles:
                 if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in line_angle_save):
                     line_angle_save.append(angle)
-            slope = (y2 - y1) / (x2 - x1)
-            
-    
+                    
     return img,lines,line_angle_save
 
 #빨간십자선 좌표 들어있는 곳
@@ -316,6 +314,10 @@ def draw_dots( img , lines ):
         draw_dot(img=dots,x=x2,y=y2)
     return dots
 
+def get_slopes( lines ):
+    for l in lines:
+        x1, y1, x2, y2 = l
+        # print(x1,y1,x2,y2)
 
 #초록 십자선 긋기
 def draw_line_through_center(img, angles):
