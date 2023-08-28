@@ -286,6 +286,8 @@ def mask_red_color(img):
     return mask
 
 def draw_lines(img, lines):
+    save = []
+    
     '''
     이 함수는 검출된 선을 이미지 위에 그리는 함수입니다.
     img: 원본 이미지
@@ -298,19 +300,35 @@ def draw_lines(img, lines):
             x1, y1, x2, y2 = line[0]
             print(f"시작 좌표 x:{x1}, y:{y1} | 끝 좌표 x :{x2}, y:{y2}")
             cv2.line(img, (x1,y1), (x2,y2), (80,0,80), 3)
+            save.append([(x1, y1), (x2, y2)])
             
     return img
 
 def get_lines(img):
     # Canny 엣지 검출
+    slope = 0
+    angles = []
+    line_angle_save = []
     binary = img.copy();
     edges = cv2.Canny(binary, 50, 150)
 
     # Hough Line Transform으로 선분 검출
     lines = cv2.HoughLinesP(edges,rho=1,theta=np.pi/180,
                             threshold=100,minLineLength=10,maxLineGap=250)
+
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            
+            angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi    
+            angles.append(angle)
+            for angle in angles:
+                if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in line_angle_save):
+                    line_angle_save.append(angle)
+            slope = (y2 - y1) / (x2 - x1)
+            
     
-    return img,lines
+    return img,lines,line_angle_save
 
 def draw_dots( img , lines ):
     dots = img.copy()

@@ -16,7 +16,7 @@ def main():
     image = cv2.imread('dlatldhs_test_pic.png')
 
     mask = functions.mask_red_color(image)
-    ed_img, lines = functions.get_lines(mask)
+    ed_img, lines, line_angle_save = functions.get_lines(mask)
     copy = image.copy()
 
     
@@ -42,6 +42,7 @@ def main():
     cv2.imshow('image',image)
     cv2.imshow('mask ',mask)
     cv2.imshow('copy',copy)
+    print("각도들 : ", line_angle_save)
     # cv2.imshow('result',result)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
