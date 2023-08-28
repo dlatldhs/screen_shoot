@@ -41,7 +41,7 @@ def main():
     
 
     cv2.imshow('image',image)
-    print("초록 y절편 : ", green_intercept_y)
+    # print("초록 y절편 : ", green_intercept_y)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 

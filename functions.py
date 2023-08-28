@@ -300,7 +300,7 @@ def get_lines(img):
             for angle in angles:
                 if not any(int(angle) // 10 == int(existing_angle) // 10 for existing_angle in line_angle_save):
                     line_angle_save.append(angle)
-                    
+
     return img,lines,line_angle_save
 
 #빨간십자선 좌표 들어있는 곳
@@ -339,7 +339,7 @@ def draw_line_through_center(img, angles):
         y_end = int(slope * x_end + b)
 
         green_intercept_y = y_start - slope * x_start 
-
+        print("초록 y좌표 : ", green_intercept_y)
         # 선분을 초록색으로 그리기
         cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
 
