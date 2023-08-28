@@ -345,7 +345,8 @@ def draw_line_through_center(img, angles):
         # print("초록 y좌표 : ", green_intercept_y)
         # 선분을 초록색으로 그리기
         cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
+        cv2.circle(img, (cx, cy), 5, (0, 0, 255), -1)
 
         green_slopes.append(slope)
-
-    return  green_intercepts_y, green_slopes
+    #중점 을 반환(계산에 사용)
+    return  green_intercepts_y, green_slopes, cx, cy

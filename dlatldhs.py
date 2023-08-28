@@ -14,6 +14,7 @@ def main():
     red_intercepts_y = []
     mx = []
     my = []
+    
     c = 2
 
     # capture img
@@ -36,23 +37,34 @@ def main():
 
     _ = functions.draw_dots(image,red_line_list)
 
-    green_intercepts_y, green_slopes = functions.draw_line_through_center(image, line_angle_save)
+    green_intercepts_y, green_slopes, cx, cy = functions.draw_line_through_center(image, line_angle_save)
 
     # x : (y절편2 - y절편1)/(기울기1-기울기2)
-    mx.append( (green_intercepts_y[0] - red_intercepts_y[1])/(red_slopes[1] - green_slopes[0] ) )
-    mx.append( (green_intercepts_y[1] - red_intercepts_y[0])/(red_slopes[0] - green_slopes[1] ) )
+    mx.append((green_intercepts_y[0] - red_intercepts_y[1])/(red_slopes[1] - green_slopes[0] ) )
+    mx.append((green_intercepts_y[1] - red_intercepts_y[0])/(red_slopes[0] - green_slopes[1] ) )
 
     my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
     my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
 
-    print(f"green intercepts[0]: {green_intercepts_y[0]}\ngreen_intercepts[1]:{green_intercepts_y[1]}")
-    
-    print(f"meet dot mx[0]:{mx[0]}\nmx[1]:{mx[1]}")
-    print(f"meet dot my[0]:{my[0]}\nmy[1]:{my[1]}")
+    #이 값들을 정수형으로 변환 및 절댓값으로 변환을 해준다.
+    abs_mxy_0 = int(abs(mx[0])), int(abs(my[0]))
+    abs_mxy_1 = int(abs(mx[1])), int(abs(my[1]))
 
-    cv2.circle(image, (int(mx[0]), int(my[0])), 5, (255, 0, 0), -1)
-    print(mx,my)
-    cv2.circle(image, (int(mx[1]), int(my[1] * -1)), 5, (255, 0, 0), -1)
+    print("교점 1 :", abs_mxy_0)
+    print("교점 2 :", abs_mxy_1)
+    print("중점 : ", cx, cy)
+    
+    #중점과 교차점까지의 거리를 측정
+    cal_1, cal_2 = cx - abs_mxy_0[0], cy - abs_mxy_0[1]
+    cal_3, cal_4 = cx - abs_mxy_1[0], cy - abs_mxy_1[1]
+
+    print("거리차1 : ", cal_1, cal_2)
+    print("거리차2 : ", cal_3, cal_4)
+    #왼쪽 선의 교점
+    cv2.circle(image,(abs_mxy_0),5,(0, 255, 255),-1) 
+
+    #오른쪽 선의 교점
+    cv2.circle(image,(abs_mxy_1),5,(255, 0, 0),-1)
     
     cv2.imshow('image',image)
     cv2.waitKey(0)
