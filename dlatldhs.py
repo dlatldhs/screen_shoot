@@ -33,7 +33,7 @@ def main():
             red_slopes.append(red_slope)
             red_intercept_y = y1 - ( red_slope * x1 )
             red_intercepts_y.append(red_intercept_y)
-            print(f"red intercepts {red_intercept_y}")
+            # print(f"red intercepts {red_intercept_y}")
 
     _ = functions.draw_dots(image,red_line_list)
 
@@ -45,26 +45,22 @@ def main():
 
     my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
     my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
-
-    #이 값들을 정수형으로 변환 및 절댓값으로 변환을 해준다.
-    abs_mxy_0 = int(abs(mx[0])), int(abs(my[0]))
-    abs_mxy_1 = int(abs(mx[1])), int(abs(my[1]))
-
-    print("교점 1 :", abs_mxy_0)
-    print("교점 2 :", abs_mxy_1)
-    print("중점 : ", cx, cy)
     
+    print("교점 1 : ", int(mx[0]), int(my[0]))
+    print("교점 2 : ", int(mx[1]), int(my[1]))
+    print("중점 : ", cx, cy)
+
     #중점과 교차점까지의 거리를 측정
-    center_intersection_distance_1, center_intersection_distance_2 = cx - abs_mxy_0[0], cy - abs_mxy_0[1]
-    center_intersection_distance_3, center_intersection_distance_4 = cx - abs_mxy_1[0], cy - abs_mxy_1[1]
+    center_intersection_distance_1, center_intersection_distance_2 = cx - int(mx[0]), cy - int(my[0])
+    center_intersection_distance_3, center_intersection_distance_4 = cx - int(mx[1]), cy - int(my[1])
 
     print("거리차1 : ", center_intersection_distance_1, center_intersection_distance_2)
     print("거리차2 : ", center_intersection_distance_3, center_intersection_distance_4)
     #왼쪽 선의 교점
-    cv2.circle(image,(abs_mxy_0),5,(0, 255, 255),-1) 
-
+    cv2.circle(image, (int(abs(mx[0])), int(abs(my[0]))), 5, (255, 0, 0), -1)
+    
     #오른쪽 선의 교점
-    cv2.circle(image,(abs_mxy_1),5,(255, 0, 0),-1)
+    cv2.circle(image, (int(abs(mx[1])), int(abs(my[1]))), 5, (255, 0, 0), -1)
     
     cv2.imshow('image',image)
     cv2.waitKey(0)
