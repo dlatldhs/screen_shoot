@@ -50,6 +50,9 @@ def main():
     print(f"meet dot mx[0]:{mx[0]}\nmx[1]:{mx[1]}")
     print(f"meet dot my[0]:{my[0]}\nmy[1]:{my[1]}")
 
+    cv2.circle(image, (int(mx[0]), int(my[0])), 5, (255, 0, 0), -1)
+    print(mx,my)
+    cv2.circle(image, (int(mx[1]), int(my[1] * -1)), 5, (255, 0, 0), -1)
     
     cv2.imshow('image',image)
     cv2.waitKey(0)
