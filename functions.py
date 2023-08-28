@@ -252,7 +252,11 @@ def detect_red_lines(img):
             # 각도만 반환
             angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi    
     
-    return angle
+            slope = (y2 - y1) / (x2 - x1)
+            y_intercept = y1 - slope * x1
+    
+    # return angle
+    return lines
 
 
 def mask_red_color(img):

@@ -16,7 +16,7 @@ def line_params(line):
     y_intercept = y1 - slope * x1
     return slope, y_intercept
 
-img = cv2.imread("lines.jpg")
+img = cv2.imread("ff.png")
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 edges = cv2.Canny(gray, 50, 150)
 lines = cv2.HoughLines(edges, 1, np.pi/180, 100)

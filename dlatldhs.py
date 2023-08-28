@@ -14,7 +14,7 @@ def main():
     image = cv2.imread('dlatldhs_test_pic.png')
 
     mask = functions.mask_red_color(image)
-    lines = functions.detect_red_lines(mask)
+    lines = functions.detect_red_lines(image)
 
     img = image.copy()
     result = functions.draw_lines(img,lines)
