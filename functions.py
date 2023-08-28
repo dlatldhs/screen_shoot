@@ -83,29 +83,30 @@ def detect_green_cross_lines(image):
 
     return output, angles
 
-def draw_line_through_center(img, slope):
+def draw_line_through_center(img, angles):
     h, w = img.shape[:2]
     cx = w // 2
     cy = h // 2
+ 
+    # 여기 변경된 부분
+    for angle in angles:
+        slope = np.tan(np.deg2rad(angle))  # Convert to radians as np.tan expects input in radians
 
-    # y절편 계산
-    b = cy - slope * cx
+        # y절편 계산
+        b = cy - slope * cx
 
-    # 두 점의 좌표를 계산
-    x_start = 0
-    y_start = int(slope * x_start + b)
-    x_end = w
-    y_end = int(slope * x_end + b)
+        # 두 점의 좌표를 계산
+        x_start = 0
+        y_start = int(slope * x_start + b)
+        x_end = w
+        y_end = int(slope * x_end + b)
 
-    # 선분을 초록색으로 그리기
-    cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
+        # 선분을 초록색으로 그리기
+        cv2.line(img, (x_start, y_start), (x_end, y_end), (0, 255, 0), 2)
 
-    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope = 기울기
-    #초록색 시작, 끝점 확인하는 코드
-    print("초록색 x1 : ", x_start, "초록색 y1 : ", y_start)
-    print("초록색 x2 : ", x_end, "초록색 y2 : ", y_end)
-    print("현재 초록색 기울기 : ", result_slope)
-
+    result_slope = round(slope, 2) #소수점 둘째자리까지 뽑아내기 result_slope=기울기
+    
+    return img 
 
 def detect_red_cross_lines(image):
     '''
@@ -286,7 +287,6 @@ def mask_red_color(img):
     return mask
 
 def draw_lines(img, lines):
-    save = []
     
     '''
     이 함수는 검출된 선을 이미지 위에 그리는 함수입니다.
@@ -300,7 +300,6 @@ def draw_lines(img, lines):
             x1, y1, x2, y2 = line[0]
             print(f"시작 좌표 x:{x1}, y:{y1} | 끝 좌표 x :{x2}, y:{y2}")
             cv2.line(img, (x1,y1), (x2,y2), (80,0,80), 3)
-            save.append([(x1, y1), (x2, y2)])
             
     return img
 
