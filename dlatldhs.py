@@ -55,11 +55,11 @@ def main():
     print("중점 : ", cx, cy)
     
     #중점과 교차점까지의 거리를 측정
-    cal_1, cal_2 = cx - abs_mxy_0[0], cy - abs_mxy_0[1]
-    cal_3, cal_4 = cx - abs_mxy_1[0], cy - abs_mxy_1[1]
+    center_intersection_distance_1, center_intersection_distance_2 = cx - abs_mxy_0[0], cy - abs_mxy_0[1]
+    center_intersection_distance_3, center_intersection_distance_4 = cx - abs_mxy_1[0], cy - abs_mxy_1[1]
 
-    print("거리차1 : ", cal_1, cal_2)
-    print("거리차2 : ", cal_3, cal_4)
+    print("거리차1 : ", center_intersection_distance_1, center_intersection_distance_2)
+    print("거리차2 : ", center_intersection_distance_3, center_intersection_distance_4)
     #왼쪽 선의 교점
     cv2.circle(image,(abs_mxy_0),5,(0, 255, 255),-1) 
 
