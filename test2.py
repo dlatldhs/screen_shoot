@@ -27,7 +27,7 @@ image = cv2.imread(img_path)
    # 정수 나눗셈 사용하여 반올림 처리
 # image = cv2.resize(img, (w,h))
 
-angle =61.98   # 각도 대입: 54.98°와 -26.19° 설정 예시입니다.
+angle =60.98   # 각도 대입: 54.98°와 -26.19° 설정 예시입니다.
 angle2 =-28.19   # 각도 대입: 54.98°와 -26.19° 설정 예시입니다.
 slope = np.tan(angle * np.pi / 180.0)
 slope2= np.tan(angle2 * np.pi /180.0)
