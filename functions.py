@@ -253,3 +253,46 @@ def detect_red_lines(img):
             angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi    
     
     return angle
+
+
+def mask_red_color(img):
+    '''
+    이 함수는 이미지에서 빨간색 부분만 마스킹합니다.
+    img: 원본 이미지
+    '''
+
+    # BGR -> HSV 변환
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # HSV에서 빨간색 범위를 정의합니다.
+    # 아래 값들은 일반적인 빨간색에 대한 근사치이며, 실제 상황에 따라 조정이 필요할 수 있습니다.
+    
+    lower_red1 = np.array([0, 70, 50])
+    upper_red1 = np.array([10, 255, 255])
+    
+    lower_red2 = np.array([170, 70, 50])
+    upper_red2 = np.array([180, 255, 255])
+    
+    # 빨간색 범위의 마스크 생성
+    mask1 = cv2.inRange(hsv, lower_red1 , upper_red1)
+    mask2 = cv2.inRange(hsv ,lower_red2 ,upper_red2)
+    
+    mask=mask1+mask2
+    
+    return mask
+
+def draw_lines(img, lines):
+    '''
+    이 함수는 검출된 선을 이미지 위에 그리는 함수입니다.
+    img: 원본 이미지
+    lines: detect_red_lines() 함수에서 반환된 선의 좌표 리스트
+    '''
+
+    # lines가 None이 아닐 때만 실행
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            print(f"시작 좌표 x:{x1}, y:{y1} | 끝 좌표 x :{x2}, y:{y2}")
+            cv2.line(img, (x1,y1), (x2,y2), (80,0,80), 3)
+            
+    return img
