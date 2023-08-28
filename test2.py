@@ -37,8 +37,8 @@ draw_line_through_center(image,slope)
 draw_line_through_center(image,slope2)
 
 crossline_img, angles, (x1,y1) , (x2,y2) = functions.detect_red_cross_lines(image)
-cv2.circle(crossline_img, (x1,y1), 5, (0, 255, 0), -1)
-cv2.circle(crossline_img, (x2,y2), 5, (0, 255, 0), -1)
+# cv2.circle(crossline_img, (x1,y1), 5, (0, 255, 0), -1)
+# cv2.circle(crossline_img, (x2,y2), 5, (0, 255, 0), -1)
 while True:
 	cv2.imshow("Result", image)
 	cv2.imshow("Result2", crossline_img)

@@ -245,5 +245,11 @@ def detect_red_lines(img):
                              threshold=50,
                              minLineLength=10,
                              maxLineGap=250)
+    if lines is not None:
+        for line in lines:
+            # first line
+            x1, y1, x2, y2 = line[0]
+            # 각도만 반환
+            angle = np.arctan2(y2 - y1, x2 - x1) * 180 / np.pi    
     
-    return lines
+    return angle
