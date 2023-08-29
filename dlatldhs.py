@@ -29,6 +29,8 @@ def main():
     # capture img
     image = cv2.imread('dlatldhs_test_pic.png')
     frame_h, frame_w = image.shape[:2]
+    frame_h = frame_h//2
+    frame_w = frame_w//2
 
     mask = functions.mask_red_color(image)
     _, lines, line_angle_save = functions.get_lines(mask)
@@ -60,16 +62,8 @@ def main():
     my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
     my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
     
-    # print("교점 1 : ", int(mx[0]), int(my[0]))
-    # print("교점 2 : ", int(mx[1]), int(my[1]))
-    # print("중점 : ", cx, cy)
-
-    #중점과 교차점까지의 거리를 측정
-    center_intersection_distance_1, center_intersection_distance_2 = cx - int(mx[0]), cy - int(my[0])
-    center_intersection_distance_3, center_intersection_distance_4 = cx - int(mx[1]), cy - int(my[1])
-
-    print("거리차1 : ", center_intersection_distance_1, center_intersection_distance_2)
-    print("거리차2 : ", center_intersection_distance_3, center_intersection_distance_4)
+    print("교점 1 : ", int(mx[0]), int(my[0]))
+    print("교점 2 : ", int(mx[1]), int(my[1]))
 
     #왼쪽 선의 교점
     cv2.circle(image, (int(abs(mx[0])), int(abs(my[0]))), 5, (255, 0, 0), -1)
@@ -77,6 +71,25 @@ def main():
     #오른쪽 선의 교점
     cv2.circle(image, (int(abs(mx[1])), int(abs(my[1]))), 5, (255, 0, 0), -1)
     
+    functions.draw_dot(image,frame_w,frame_h)
+
+    # 교점 x 중점 y
+    pita_1_x = int(mx[0])
+    pita_1_y = frame_h
+    pita_2_x = int(mx[1])
+    pita_2_y = frame_h
+
+    functions.draw_dot(image,pita_1_x,pita_1_y)
+    functions.draw_dot(image,pita_2_x,pita_2_y)
+    
+    cv2.line(image,(abs(pita_1_x),abs(pita_1_y)),(frame_w,frame_h),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[0])),int(abs(my[0]))),(pita_1_x,pita_1_y),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[0])),int(abs(my[0]))),(frame_w,frame_h),(80,0,80), 3)
+
+    cv2.line(image,(abs(pita_2_x),abs(pita_2_y)),(frame_w,frame_h),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[1])),int(abs(my[1]))),(pita_2_x,pita_2_y),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[1])),int(abs(my[1])) ),(frame_w,frame_h),(80,0,80), 3)
+
     rotate_image = image.copy()
 
     hsv = cv2.cvtColor(rotate_image, cv2.COLOR_BGR2HSV)
