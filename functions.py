@@ -349,4 +349,4 @@ def draw_line_through_center(img, angles):
 
         green_slopes.append(slope)
     #중점 을 반환(계산에 사용)
-    return  green_intercepts_y, green_slopes, cx, cy
+    return  green_intercepts_y, green_slopes, cx, cy, angles

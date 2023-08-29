@@ -1,11 +1,20 @@
 import cv2
 import numpy as np
 import functions
+import math
 
 def main():
 
     # img variable
     result_image_path = "only_crossline.png"
+    target_background_image = cv2.imread(result_image_path)
+    h, w, _ = target_background_image.shape
+    target_h = h//2
+    target_w = w//2
+    target_background_image = cv2.resize(target_background_image,(target_w,target_h))
+    h, w, _ = target_background_image.shape
+    target_h = h//2
+    target_w = w//2
 
     # line angle save
     line_angle_save = []
@@ -19,11 +28,13 @@ def main():
 
     # capture img
     image = cv2.imread('dlatldhs_test_pic.png')
+    frame_h, frame_w = image.shape[:2]
 
     mask = functions.mask_red_color(image)
     _, lines, line_angle_save = functions.get_lines(mask)
     
-
+    # red line x y & intercept_y slope
+    # red_slope : 기울기 , red_intercept_y : y 절편
     for line in lines:
         if c > 0:
             c -= 1
@@ -35,14 +46,17 @@ def main():
             red_intercepts_y.append(red_intercept_y)
             # print(f"red intercepts {red_intercept_y}")
 
+    # 점 찍어 보기
     _ = functions.draw_dots(image,red_line_list)
 
-    green_intercepts_y, green_slopes, cx, cy = functions.draw_line_through_center(image, line_angle_save)
-
+    # 초록색 y 절편 & 기울기 
+    green_intercepts_y, green_slopes, cx, cy, angles = functions.draw_line_through_center(image, line_angle_save)
+    
     # x : (y절편2 - y절편1)/(기울기1-기울기2)
     mx.append((green_intercepts_y[0] - red_intercepts_y[1])/(red_slopes[1] - green_slopes[0] ) )
     mx.append((green_intercepts_y[1] - red_intercepts_y[0])/(red_slopes[0] - green_slopes[1] ) )
 
+    # y : (기울기1*x)+y절편1
     my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
     my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
     
@@ -56,12 +70,58 @@ def main():
 
     print("거리차1 : ", center_intersection_distance_1, center_intersection_distance_2)
     print("거리차2 : ", center_intersection_distance_3, center_intersection_distance_4)
+
+
+    # functions.draw_dot(img=target_background_image,x=target_w,y=target_h)
+    # cv2.imshow('target',target_background_image)
+
     #왼쪽 선의 교점
     cv2.circle(image, (int(abs(mx[0])), int(abs(my[0]))), 5, (255, 0, 0), -1)
-    
+    print(int(abs(mx[0])))
     #오른쪽 선의 교점
     cv2.circle(image, (int(abs(mx[1])), int(abs(my[1]))), 5, (255, 0, 0), -1)
     
+    rotate_image = image.copy()
+    rotate_h, rotate_w, _ = rotate_image.shape
+    M = cv2.getRotationMatrix2D((cx,cy), angles[1], 1.0)
+    rotate_image = cv2.warpAffine(rotate_image, M, (rotate_w, rotate_h))   
+
+    hsv = cv2.cvtColor(rotate_image, cv2.COLOR_BGR2HSV)
+
+    # 파란색 범위 정의 (HSV)
+    lower_blue = np.array([110,50,50])
+    upper_blue = np.array([130,255,255])
+
+    # HSV 이미지에서 파란색만 추출하기 위한 임계값 설정
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+    # mask와 원본 이미지를 비트 연산함으로써 파란색 부분만 남김
+    result = cv2.bitwise_and(rotate_image,rotate_image, mask= mask)
+
+    # 파랑색 점들이 있는 위치 찾기 (y,x 형태로 반환)
+    blue_points_yx = np.where(mask != 0)
+    blue_points_xy = list(zip(blue_points_yx[1], blue_points_yx[0])) # x,y 형태로 변환
+
+    cross_first_point_xy = blue_points_xy[0]  # 첫번째 좌표 저장
+    cross_last_point_xy  = blue_points_xy[-1] # 마지막 좌표 저장
+
+    print("First point: ", cross_first_point_xy)
+    print("Last  point: ", cross_last_point_xy)
+    
+    functions.draw_dot(result,cx,cy)
+    
+    (last_x, last_y) = cross_first_point_xy[1]-cy , cross_last_point_xy[0]-cx
+
+    print(last_x,last_y)
+    print(target_w,target_h)
+    target_w = target_w + last_y
+    target_h += last_x
+    print(target_w,target_h)
+    functions.draw_dot(target_background_image,target_w,target_h)
+
+    cv2.imshow('target',target_background_image)
+    cv2.imshow('result',result)
+    cv2.imshow('rotate',rotate_image)
     cv2.imshow('image',image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
