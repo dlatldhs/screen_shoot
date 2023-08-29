@@ -110,7 +110,7 @@ def main():
     
     functions.draw_dot(result,cx,cy)
     
-    (last_x, last_y) = cross_first_point_xy[1]-cy , cross_last_point_xy[0]-cx
+    (last_x, last_y) = cy-cross_first_point_xy[1] , cross_last_point_xy[0]-cx
 
     print(last_x,last_y)
     print(target_w,target_h)
