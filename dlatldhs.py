@@ -60,9 +60,9 @@ def main():
     my.append((red_slopes[1] * mx[0] + red_intercepts_y[1]))
     my.append((red_slopes[1] * mx[1] + red_intercepts_y[1]))
     
-    print("교점 1 : ", int(mx[0]), int(my[0]))
-    print("교점 2 : ", int(mx[1]), int(my[1]))
-    print("중점 : ", cx, cy)
+    # print("교점 1 : ", int(mx[0]), int(my[0]))
+    # print("교점 2 : ", int(mx[1]), int(my[1]))
+    # print("중점 : ", cx, cy)
 
     #중점과 교차점까지의 거리를 측정
     center_intersection_distance_1, center_intersection_distance_2 = cx - int(mx[0]), cy - int(my[0])
@@ -71,20 +71,13 @@ def main():
     print("거리차1 : ", center_intersection_distance_1, center_intersection_distance_2)
     print("거리차2 : ", center_intersection_distance_3, center_intersection_distance_4)
 
-
-    # functions.draw_dot(img=target_background_image,x=target_w,y=target_h)
-    # cv2.imshow('target',target_background_image)
-
     #왼쪽 선의 교점
     cv2.circle(image, (int(abs(mx[0])), int(abs(my[0]))), 5, (255, 0, 0), -1)
-    print(int(abs(mx[0])))
+    
     #오른쪽 선의 교점
     cv2.circle(image, (int(abs(mx[1])), int(abs(my[1]))), 5, (255, 0, 0), -1)
     
     rotate_image = image.copy()
-    rotate_h, rotate_w, _ = rotate_image.shape
-    M = cv2.getRotationMatrix2D((cx,cy), angles[1], 1.0)
-    rotate_image = cv2.warpAffine(rotate_image, M, (rotate_w, rotate_h))   
 
     hsv = cv2.cvtColor(rotate_image, cv2.COLOR_BGR2HSV)
 
@@ -110,7 +103,8 @@ def main():
     
     functions.draw_dot(result,cx,cy)
     
-    (last_x, last_y) = cy-cross_first_point_xy[1] , cross_last_point_xy[0]-cx
+    (last_y, last_x) = cy-cross_first_point_xy[1] , cross_last_point_xy[0]-cx
+
 
     print(last_x,last_y)
     print(target_w,target_h)
