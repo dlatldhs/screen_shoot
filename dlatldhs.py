@@ -84,11 +84,22 @@ def main():
     
     cv2.line(image,(abs(pita_1_x),abs(pita_1_y)),(frame_w,frame_h),(80,0,80), 3)
     cv2.line(image,(int(abs(mx[0])),int(abs(my[0]))),(pita_1_x,pita_1_y),(80,0,80), 3)
-    cv2.line(image,(int(abs(mx[0])),int(abs(my[0]))),(frame_w,frame_h),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[0])),int(abs(my[0]))),(frame_w,frame_h),(80,0,80), 8)
 
     cv2.line(image,(abs(pita_2_x),abs(pita_2_y)),(frame_w,frame_h),(80,0,80), 3)
     cv2.line(image,(int(abs(mx[1])),int(abs(my[1]))),(pita_2_x,pita_2_y),(80,0,80), 3)
-    cv2.line(image,(int(abs(mx[1])),int(abs(my[1])) ),(frame_w,frame_h),(80,0,80), 3)
+    cv2.line(image,(int(abs(mx[1])),int(abs(my[1])) ),(frame_w,frame_h),(80,0,80), 8)
+
+    test = (int(abs(my[0])) - int(abs(mx[0])))
+    test2 = (int(abs(my[1])) - int(abs(mx[1])))
+
+    test3 = (test ** 2) + (test ** 2)
+    test4 = (test2 ** 2) + (test2 ** 2)
+    test5 = test3 ** 0.5
+    test6 = test4 ** 0.5
+
+
+    
 
     rotate_image = image.copy()
 
@@ -111,25 +122,27 @@ def main():
     cross_first_point_xy = blue_points_xy[0]  # 첫번째 좌표 저장
     cross_last_point_xy  = blue_points_xy[-1] # 마지막 좌표 저장
 
-    print("First point: ", cross_first_point_xy)
-    print("Last  point: ", cross_last_point_xy)
+    # print("First point: ", cross_first_point_xy)
+    # print("Last  point: ", cross_last_point_xy)
     
     functions.draw_dot(result,cx,cy)
     
     (last_y, last_x) = cy-cross_first_point_xy[1] , cross_last_point_xy[0]-cx
 
 
-    print(last_x,last_y)
-    print(target_w,target_h)
+    # print(last_x,last_y)
+    # print(target_w,target_h)
     target_w = target_w + last_y
     target_h += last_x
-    print(target_w,target_h)
+    # print(target_w,target_h)
     functions.draw_dot(target_background_image,target_w,target_h)
 
-    cv2.imshow('target',target_background_image)
-    cv2.imshow('result',result)
-    cv2.imshow('rotate',rotate_image)
+    # cv2.imshow('target',target_background_image)
+    # cv2.imshow('result',result)
+    # cv2.imshow('rotate',rotate_image)
     cv2.imshow('image',image)
+    print("c^2 : ", test5)
+    print("c^2 : ", test6)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
